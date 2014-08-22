@@ -1,0 +1,82 @@
+= File formatting from EmacsLisp =
+
+Emacs has many templating libraries but none of them very useful for
+the sort of templating you do in web applications. So this is yet
+another //tool needed for Elnode//. 
+
+I originally put this together for elmarmalade and now I need it in
+other places.
+
+=== using ===
+
+It's quite simple to use. Make HTML pages that have template markers
+in them:
+
+{{{
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"></meta>
+        <title>an HTML page!</title>
+    </head>
+    <body class="home">
+        ${header}
+        <h1>${package-name}<h1> 
+        <div class="description">${description}</div>
+        <small>${author}</small>
+    </body>
+</html>
+}}}
+
+and then call the {{{file-format-html}}} function:
+
+{{{
+(require 'file-format)
+
+(file-format-html 
+   filename
+   docroot
+   replacer-function
+   extra) ;; => string of the replaced text
+}}}
+
+For example:
+
+{{{
+(file-format-html
+ "my-page.html" 
+ (expand-file-name "templates-dir" marmalade-root)
+ 'aget
+ `(("package-name" . ,package-name)
+   ("author" . ,(if (or (not author)(equal author "")) "Unknown" author))
+   ("description" . ,description)
+   ;; Replace safely later
+   ("header" . ,(propertize 
+                 "<div class=\"header\"><a href=\"http://link\">some link</a></div>"
+                 :file-format-html-safe t))))
+}}}
+
+{{{file-format}}} functions use the {{{s-format}}} convention for the
+replacement function, mostly that means you can just use the symbol
+{{{aget}}} and use an alist. 
+
+A function can be supplied and that is called with the key and the
+{{{extra}}} argument to lookup the value to be replaced.
+
+=== safety and HTML ===
+
+Everything you insert into the HTML with the templating is passed
+through {{{xml-escape-string}}} so it should be safe. If you //want//
+to insert HTML you therefore have to propertize it so that
+{{{file-format-html}}} knows not to escape it.
+
+=== other functions ===
+
+There's a non-HTML version: {{{file-format}}} which does no escaping.
+
+
+=== how does it work? ===
+
+{{{file-format}}} just uses the {{{s}}} library. It reads the whole
+file into a string and does the replacement there.
+ 
