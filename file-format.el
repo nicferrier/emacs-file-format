@@ -109,7 +109,8 @@ file."
     (let ((mtime (file-attr file-name :mtime)))
       (when (or (not template)
                 (time-less-p (or (plist-get template :time)
-                                 (seconds-to-time 0)) mtime))
+                                 (seconds-to-time 0)) 
+                             (or mtime (current-time))))
         (with-transient-file (expand-file-name name root)
           (puthash name
                    (list :name name
