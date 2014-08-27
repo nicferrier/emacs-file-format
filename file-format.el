@@ -5,7 +5,8 @@
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: lisp
 ;; Package-Requires: ((s "1.5.0"))
-;; Version: 0.0.1
+;; Version: 0.0.4
+;; Url: http://github.com/nicferrier/emacs-file-format
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
